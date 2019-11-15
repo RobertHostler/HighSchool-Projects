@@ -16,6 +16,8 @@ public class CoulombSim extends JFrame{
     Particle [] particles = new Particle [NumParticles];
     double time = 0.0;
     final double timeDelta = 1.0/Math.pow(10, 9);
+    double electricFieldStrength = 0.0001;
+    double magneticFieldStrength = 0.1;
     
     public CoulombSim(){
         canvas = new DrawCanvas();
@@ -26,11 +28,11 @@ public class CoulombSim extends JFrame{
         this.setTitle("Field Animations");
         this.setVisible(true);
 
-        //CircularDistribution();
+        CircularDistribution();
         //RingDistribution();
         //LineDistribution();
         //SDistribution();
-        SpiralDistribution();
+        //SpiralDistribution();
 
         Thread updateThread = new Thread(){
             @Override
@@ -59,6 +61,14 @@ public class CoulombSim extends JFrame{
                 coulombInteraction[1] = -coulombInteraction[1];
                 particles[j].AccumulateForce(coulombInteraction);
             }
+            double [] electricField = Fields.ConstantElectricField(particles[i].getPosition(), electricFieldStrength);
+            double [] electricForce = particles[i].ElectricForce(electricField);
+
+            double magneticField = Fields.ConstantMagneticField(particles[i].getPosition(), electricFieldStrength);
+            double [] magneticForce = particles[i].MagneticForce(magneticField);
+
+            particles[i].AccumulateForce(electricForce);
+            particles[i].AccumulateForce(magneticForce);
         }
         for (int i = 0; i < NumParticles; i++){
             particles[i].UpdateParticle(timeDelta);

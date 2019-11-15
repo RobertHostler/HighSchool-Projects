@@ -19,6 +19,10 @@ public class Particle{
         
         particleColourRGB = col;
     }
+
+    public double [] getPosition(){
+        return this.position;
+    }
     
     public void AccumulateForce(double [] interactionForce){
         NetForce[0] += interactionForce[0];
@@ -52,5 +56,17 @@ public class Particle{
         double q2 = interactingParticle.Charge;
         double [] F = {-k*q1*q2*x/(r*r*r + damping), -k*q1*q2*y/(r*r*r + damping)};
         return (F);
+    }
+
+    public double [] ElectricForce(double [] ElectricField){
+        double [] electricForce = {this.Charge*ElectricField[0], this.Charge*ElectricField[1]};
+        return electricForce;
+    }
+
+    public double [] MagneticForce(double MagneticField){
+        double [] magneticForce = {
+            this.Charge*this.velocity[1]*MagneticField, -this.Charge*this.velocity[0]*MagneticField
+        };
+        return magneticForce;
     }
 }
